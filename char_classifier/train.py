@@ -82,6 +82,8 @@ def train(config):
     train_data_queue, _ = generator_queue(train_batch_generator, max_q_size=20)
 
     model = FancyNeuralNetworks(enable_cuda=config['general']['use_cuda'])
+    if config['general']['use_cuda']:
+        model.cuda()
 
     init_learning_rate = config['training']['optimizer']['learning_rate']
     learning_rate_decay_ratio = config['training']['optimizer']['learning_rate_decay_ratio']
