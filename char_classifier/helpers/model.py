@@ -44,7 +44,6 @@ class FancyNeuralNetworks(torch.nn.Module):
         # x: batch x 1 x 20 x 20
         # conv layers
         x = F.relu(F.max_pool2d(self.conv1(x), 2))  # batch x 64 x 9 x 9
-        print("=====", x.size())
         x = F.relu(self.conv2(x))  # batch x 128 x 7 x 7
         x = self.dropout1(x)
         x = F.relu(self.conv3(x))  # batch x 192 x 5 x 5
