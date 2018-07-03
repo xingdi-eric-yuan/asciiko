@@ -31,7 +31,7 @@ class FancyNeuralNetworks(torch.nn.Module):
         self.conv2 = torch.nn.Conv2d(64, 128, kernel_size=3)
         self.conv3 = torch.nn.Conv2d(128, 192, kernel_size=3)
         self.conv4 = torch.nn.Conv2d(192, 256, kernel_size=3)
-        self.fc1 = torch.nn.Linear(1024, 1024)
+        self.fc1 = torch.nn.Linear(2304, 1024)
         self.fc2 = torch.nn.Linear(1024, 1024)
         self.fc3 = torch.nn.Linear(1024, 96)
         self.dropout1 = torch.nn.Dropout(p=0.25)
@@ -41,6 +41,27 @@ class FancyNeuralNetworks(torch.nn.Module):
         self.dropout5 = torch.nn.Dropout(p=0.5)
 
     def forward(self, x):
+        # x: batch x 1 x 20 x 20
+        # conv layers
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))  # batch x 64 x 9 x 9
+        print("=====", x.size())
+        x = F.relu(self.conv2(x))  # batch x 128 x 7 x 7
+        x = self.dropout1(x)
+        x = F.relu(self.conv3(x))  # batch x 192 x 5 x 5
+        x = self.dropout2(x)
+        x = F.relu(self.conv4(x))  # batch x 256 x 3 x 3
+        x = self.dropout3(x)
+        # fc layers
+        x = x.view(x.size(0), -1)  # batch x 2304
+        x = F.relu(self.fc1(x))  # batch x 1024
+        x = self.dropout4(x)
+        x = F.relu(self.fc2(x))  # batch x 1024
+        x = self.dropout5(x)
+        # output layers
+        x = self.fc3(x)  # batch x 96
+        return F.log_softmax(x, dim=1)  # batch x 96
+
+    def forward_64(self, x):
         # x: batch x 1 x 64 x 64
         # conv layers
         x = F.relu(F.max_pool2d(self.conv1(x), 2))  # batch x 64 x 31 x 31
@@ -51,7 +72,7 @@ class FancyNeuralNetworks(torch.nn.Module):
         x = F.relu(F.max_pool2d(self.conv4(x), 2))  # batch x 256 x 2 x 2
         x = self.dropout3(x)
         # fc layers
-        x = x.view(x.size(0), -1)  # batch x 4096
+        x = x.view(x.size(0), -1)  # batch x 1024
         x = F.relu(self.fc1(x))  # batch x 1024
         x = self.dropout4(x)
         x = F.relu(self.fc2(x))  # batch x 1024

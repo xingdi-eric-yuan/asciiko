@@ -9,9 +9,9 @@ def data_split(valid_size, test_size):
     # all 63 x 64
 
     for i in range(len(data)):
-        tmp = np.zeros((1, 64))
+        tmp = np.zeros((1, 20))
         data[i] = np.concatenate([data[i], tmp], axis=0)
-        # now they're all 64 x 64
+        # now they're all 64 x 64 (20 x 20)
 
     combined = list(zip(data, label_char))
     random.shuffle(combined)
@@ -19,7 +19,7 @@ def data_split(valid_size, test_size):
     data, label_char = list(data), list(label_char)
 
     # images
-    x = np.stack(data, axis=0)  # 130k x 64 x 64
+    x = np.stack(data, axis=0)  # 130k x 64 x 64 (20 x 20)
     # labels
     label2id = dict()
     id2label = []
