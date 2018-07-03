@@ -27,6 +27,43 @@ FORBIDDEN_KATAKANA_SHEETS = list(
     range(1191, 1197)) + list(range(1234, 1243)) + [2011, 2911]
 
 
+def minimum_square_bounding_box(img):
+    # img: h x w
+    vertical = np.sum(img, 1)  # h
+    horizontal = np.sum(img, 0)  # w
+    # vertical
+    # 000011111100
+    v_start = len(vertical) - len(np.trim_zeros(vertical, trim='f'))  # 4
+    v_end = len(np.trim_zeros(vertical, trim='b'))  # 10
+    v_len = v_end - v_start
+
+    h_start = len(horizontal) - len(np.trim_zeros(horizontal, trim='f'))  # 4
+    h_end = len(np.trim_zeros(horizontal, trim='b'))  # 10
+    h_len = h_end - h_start
+
+    if v_len <= 0 or h_len <= 0:
+        return img
+
+    res = img[v_start: v_end, h_start: h_end]  # v_len x h_len
+
+    pad = 16
+    if v_len <= 32 and h_len <= 32:
+        res = np.concatenate([np.zeros((pad, h_len)), res, np.zeros((pad, h_len))], 0)
+        res = np.concatenate([np.zeros((v_len + pad * 2, pad)), res, np.zeros((v_len + pad * 2, pad))], 1)
+
+    elif h_len > v_len:
+        diff = h_len - v_len
+        half = diff // 2
+        if half >= 1:
+            res = np.concatenate([np.zeros((half, h_len)), res, np.zeros((half, h_len))], 0)
+    elif v_len > h_len:
+        diff = v_len - h_len
+        half = diff // 2
+        if half >= 1:
+            res = np.concatenate([np.zeros((v_len, half)), res, np.zeros((v_len, half))], 1)
+    return res
+
+
 def binarize(img):
     _, imgf = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return imgf
@@ -85,11 +122,15 @@ def parse_data(f, record_len, num_char, size, database, image_brightness):
             # --------------------------
             # binarize, or other opencv function
             img = np.asarray(iE)
-            biimg = binarize(img)
+            img = binarize(img)
+            img = minimum_square_bounding_box(img)
+            img = cv2.resize(img, (20, 20))
+            img = img.astype('uint8')
+            img = binarize(img)
 
             if r[2] not in FORBIDDEN_KATAKANA_SHEETS:
                 labels_part += [r[3]]
-                feature_part += [biimg]
+                feature_part += [img]
                 labels_char_part += [r[1]]
 
         except Exception as e:
