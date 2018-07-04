@@ -2,12 +2,13 @@ general:
   seed: 42
   cuda_deterministic: true
   use_cuda: False
+  etl_split: "6"
 
 training:
   scheduling:
-    batch_size: 16
+    batch_size: 32
     epoch: 10000
-    model_checkpoint_path: 'saved_models/model1.pt'
+    model_checkpoint_path: 'saved_models/model6.pt'
 
   optimizer:
     learning_rate: 0.0001
