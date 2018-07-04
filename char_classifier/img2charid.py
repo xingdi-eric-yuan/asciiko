@@ -80,4 +80,7 @@ labels = [id2label[item] for item in y]
 for _l, idx in zip(labels, non_zeros_idx):
     res[idx // n_hori][idx % n_hori] = _l
 
-print(res)
+
+with open("tmp.txt", "w") as text_file:
+    text_file.write(str(res))
+# print(res)
