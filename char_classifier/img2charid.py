@@ -27,6 +27,7 @@ w = width // classifier_img_size
 if width % classifier_img_size > 0:
     w += 1
 w *= classifier_img_size
+w, h = w * 2, h * 2
 
 height, width = h, w
 print(height, width)
@@ -75,6 +76,6 @@ id2label = load_id2label()
 res = [['SP' for j in range(n_hori)] for i in range(n_vert)]
 labels = [id2label[item] for item in y]
 for _l, idx in zip(labels, non_zeros_idx):
-    res[idx // n_vert][idx % n_hori] = _l
+    res[idx // n_hori][idx % n_hori] = _l
 
 print(res)
