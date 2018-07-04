@@ -47,7 +47,7 @@ for h in range(n_vert):
 # heuristics: subimage without any value --> SPACE
 non_zeros = []
 non_zeros_idx = []
-non_ratio = 0.02
+non_ratio = 0.1
 for i, _img in enumerate(subimgs):
     _tmp = _img.astype('float32') / 255.0
     if np.sum(_tmp) <= _img.shape[0] * _img.shape[1] * non_ratio:
