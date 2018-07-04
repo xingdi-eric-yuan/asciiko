@@ -1,7 +1,7 @@
 import cv2
 import torch
 import numpy as np
-from char_classifier.inference import load_id2label, load_model, predict
+from inference import load_id2label, load_model, predict
 classifier_img_size = 20
 model_checkpoint_path = 'saved_models/model1.pt'
 use_cuda = False
