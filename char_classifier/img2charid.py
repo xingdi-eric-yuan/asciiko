@@ -35,15 +35,24 @@ img_resize = img_resize.astype('uint8')
 img_resize = binarize(img_resize)
 # invert colors cuz in the test images, edges are in black
 img_resize = 255 - img_resize
+n_vert, n_hori = height // classifier_img_size, width // classifier_img_size
 
 subimgs = []
-for h in range(height // classifier_img_size):
-    for w in range(width // classifier_img_size):
+for h in range(n_vert):
+    for w in range(n_hori):
         _img = img_resize[h * classifier_img_size: (h + 1) * classifier_img_size, w * classifier_img_size: (w + 1) * classifier_img_size]
         subimgs.append(_img)
 
-x = np.stack(subimgs, 0)  # batch x classifier_img_size x classifier_img_size
+# heuristics: subimage without any value --> SPACE
+non_zeros = []
+non_zeros_idx = []
+for i, _img in enumerate(subimgs):
+    if np.sum(_img) == 0:
+        continue
+    non_zeros.append(_img)
+    non_zeros_idx.append(i)
 
+x = np.stack(non_zeros, 0)  # non_zeros x 20 x 20
 # 0-255 --> 0.0-1.0
 x = x.astype('float32') / 255.0
 x = x.reshape((x.shape[0], 1) + x.shape[1:])
@@ -63,9 +72,9 @@ for b in range(number_batch):
     y += batch_y.tolist()
 
 id2label = load_id2label()
-res = []
+res = [['SP' for j in range(n_hori)] for i in range(n_vert)]
 labels = [id2label[item] for item in y]
-for h in range(height // classifier_img_size):
-    res.append(labels[h * (width // classifier_img_size): (h + 1) * (width // classifier_img_size)])
+for _l, idx in zip(labels, non_zeros_idx):
+    res[idx // n_vert][idx % n_hori] = _l
 
 print(res)
