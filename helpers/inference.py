@@ -38,7 +38,10 @@ def load_model(model_checkpoint_path, use_cuda=False):
     if use_cuda:
         model.cuda()
 
-    model.load_state_dict(torch.load(model_checkpoint_path))
+    if use_cuda:
+        model.load_state_dict(torch.load(model_checkpoint_path))
+    else:
+        model.load_state_dict(torch.load(model_checkpoint_path, map_location={'cuda:0': 'cpu'}))
     return model
 
 
