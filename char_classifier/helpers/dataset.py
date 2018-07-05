@@ -1,12 +1,13 @@
 import numpy as np
 import random
-import helpers.read_etl_1_6
+import os
+from helpers.read_etl_1_6 import import_data
 
 
 def data_split(valid_size, test_size, etl='1'):
 
     assert etl in ["1", "6"]
-    data, label, label_char = helpers.read_etl_1_6.import_data(etl, image_brightness=16)
+    data, label, label_char = import_data(etl, image_brightness=16)
     # all 63 x 64
 
     for i in range(len(data)):
@@ -38,15 +39,18 @@ def data_split(valid_size, test_size, etl='1'):
     valid_x, valid_y = x[-(valid_size + test_size): -test_size], y[-(valid_size + test_size): -test_size]
     train_x, train_y = x[: -(valid_size + test_size)], y[: -(valid_size + test_size)]
 
-    with open("etl" + etl + "_id2label.txt", "w") as text_file:
+    if not os.path.exists("parsed_etl_data"):
+        os.mkdir("parsed_etl_data")
+
+    with open("parsed_etl_data/etl" + etl + "_id2label.txt", "w") as text_file:
         text_file.write("\n".join(id2label))
 
-    np.save("etl" + etl + "_images_train.npy", train_x)
-    np.save("etl" + etl + "_labels_train.npy", train_y)
+    np.save("parsed_etl_data/etl" + etl + "_images_train.npy", train_x)
+    np.save("parsed_etl_data/etl" + etl + "_labels_train.npy", train_y)
 
-    np.save("etl" + etl + "_images_valid.npy", valid_x)
-    np.save("etl" + etl + "_labels_valid.npy", valid_y)
+    np.save("parsed_etl_data/etl" + etl + "_images_valid.npy", valid_x)
+    np.save("parsed_etl_data/etl" + etl + "_labels_valid.npy", valid_y)
 
-    np.save("etl" + etl + "_images_test.npy", test_x)
-    np.save("etl" + etl + "_labels_test.npy", test_y)
+    np.save("parsed_etl_data/etl" + etl + "_images_test.npy", test_x)
+    np.save("parsed_etl_data/etl" + etl + "_labels_test.npy", test_y)
     print("saved etl" + etl + " data into files")

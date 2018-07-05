@@ -17,10 +17,10 @@ wait_time = 0.01  # in seconds
 
 
 def load_data_from_np(split="train", etl="1"):
-    x = np.load("etl" + etl + "_images_" + split + ".npy")
-    y = np.load("etl" + etl + "_labels_" + split + ".npy")
+    x = np.load("parsed_etl_data/etl" + etl + "_images_" + split + ".npy")
+    y = np.load("parsed_etl_data/etl" + etl + "_labels_" + split + ".npy")
     id2label = []
-    with open("etl" + etl + "_id2label.txt", "r") as ins:
+    with open("parsed_etl_data/etl" + etl + "_id2label.txt", "r") as ins:
         for line in ins:
             line = line.strip()
             if line == 'b"\' "':
@@ -73,7 +73,7 @@ def train(config):
         config['general']['use_cuda'] = False  # Disable CUDA.
 
     etl = config['general']['etl_split']
-    if not os.path.exists("etl" + etl + "_images_train.npy"):
+    if not os.path.exists("parsed_etl_data"):
         data_split(3000, 3000, etl=etl)  # valid and test size
 
     batch_size = config['training']['scheduling']['batch_size']
