@@ -6,13 +6,15 @@ import torch
 from helpers.model import FancyNeuralNetworks
 
 
-def load_id2label():
+def load_id2label(etl="1"):
     id2label = []
-    with open("etl1_id2label.txt", "r") as ins:
+    with open("etl" + etl + "_id2label.txt", "r") as ins:
         for line in ins:
             line = line.strip()
             if line == 'b"\' "':
                 line = "' "
+            elif line == 'b"\'\'"':
+                line = "''"
             elif line.startswith("b'") and line.endswith("'"):
                 line = line[2:-1]
             else:
@@ -40,9 +42,9 @@ def load_model(model_checkpoint_path, use_cuda=False):
     return model
 
 
-def predict(model, batch_x, use_cuda):
+def predict(model, batch_x, use_cuda, etl="1"):
     model.eval()
-    batch_pred = model.forward(batch_x)
+    batch_pred = model.forward(batch_x, etl=etl)
     batch_pred = batch_pred.cpu().data.numpy()
     batch_pred = np.argmax(batch_pred, -1)  # batch
     return batch_pred

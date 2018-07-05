@@ -1,9 +1,11 @@
 import cv2
+import json
 import torch
 import numpy as np
-from inference import load_id2label, load_model, predict
+from helpers.inference import load_id2label, load_model, predict
 classifier_img_size = 20
-model_checkpoint_path = 'saved_models/model1.pt'
+etl = "6"
+model_checkpoint_path = "saved_models/model" + etl + ".pt"
 use_cuda = False
 batch_size = 32
 
@@ -71,16 +73,15 @@ y = []
 number_batch = (x.size(0) + batch_size - 1) // batch_size
 for b in range(number_batch):
     batch_x = x[b * batch_size: (b + 1) * batch_size]
-    batch_y = predict(model, batch_x, use_cuda)
+    batch_y = predict(model, batch_x, use_cuda, etl=etl)
     y += batch_y.tolist()
 
-id2label = load_id2label()
+id2label = load_id2label(etl=etl)
 res = [['SP' for j in range(n_hori)] for i in range(n_vert)]
 labels = [id2label[item] for item in y]
 for _l, idx in zip(labels, non_zeros_idx):
     res[idx // n_hori][idx % n_hori] = _l
 
 
-with open("tmp.txt", "w") as text_file:
-    text_file.write(str(res))
-# print(res)
+with open("tmp.json", "w") as text_file:
+    json.dump(res, text_file)

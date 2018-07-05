@@ -16,15 +16,17 @@ from helpers.generic import batch_generator, generator_queue
 wait_time = 0.01  # in seconds
 
 
-def load_data_from_np(split="train"):
-    x = np.load("etl1_images_" + split + ".npy")
-    y = np.load("etl1_labels_" + split + ".npy")
+def load_data_from_np(split="train", etl="1"):
+    x = np.load("etl" + etl + "_images_" + split + ".npy")
+    y = np.load("etl" + etl + "_labels_" + split + ".npy")
     id2label = []
-    with open("etl1_id2label.txt", "r") as ins:
+    with open("etl" + etl + "_id2label.txt", "r") as ins:
         for line in ins:
             line = line.strip()
             if line == 'b"\' "':
                 line = "' "
+            elif line == 'b"\'\'"':
+                line = "''"
             elif line.startswith("b'") and line.endswith("'"):
                 line = line[2:-1]
             else:
@@ -33,7 +35,7 @@ def load_data_from_np(split="train"):
     return x, y, id2label
 
 
-def eval(model, batch_generator, batch_size, data_size):
+def eval(model, batch_generator, batch_size, data_size, etl="1"):
 
     model.eval()
     number_batch = (data_size + batch_size - 1) // batch_size
@@ -49,7 +51,7 @@ def eval(model, batch_generator, batch_size, data_size):
             else:
                 time.sleep(wait_time)
         batch_x, batch_y = generator_output
-        batch_pred = model.forward(batch_x)
+        batch_pred = model.forward(batch_x, etl=etl)
         batch_pred = batch_pred.cpu().data.numpy()
         batch_y = batch_y.cpu().data.numpy()
         batch_pred = np.argmax(batch_pred, -1)  # batch
@@ -70,12 +72,13 @@ def train(config):
     else:
         config['general']['use_cuda'] = False  # Disable CUDA.
 
-    if not os.path.exists("etl1_images_train.npy"):
-        data_split(3000, 3000)  # valid and test size
+    etl = config['general']['etl_split']
+    if not os.path.exists("etl" + etl + "_images_train.npy"):
+        data_split(3000, 3000, etl=etl)  # valid and test size
 
     batch_size = config['training']['scheduling']['batch_size']
-    x_train, y_train, id2label = load_data_from_np("train")
-    x_valid, y_valid, _ = load_data_from_np("valid")
+    x_train, y_train, id2label = load_data_from_np("train", etl=etl)
+    x_valid, y_valid, _ = load_data_from_np("valid", etl=etl)
 
     train_batch_generator = batch_generator(x_train, y_train, batch_size=batch_size, enable_cuda=config['general']['use_cuda'])
     valid_batch_generator = batch_generator(x_valid, y_valid, batch_size=batch_size, enable_cuda=config['general']['use_cuda'])
@@ -114,7 +117,7 @@ def train(config):
                 batch_x, batch_y = generator_output
                 optimizer.zero_grad()
                 model.zero_grad()
-                batch_pred = model.forward(batch_x)
+                batch_pred = model.forward(batch_x, etl=etl)
                 loss = F.nll_loss(batch_pred, batch_y)
                 loss.backward()
                 # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
@@ -126,7 +129,7 @@ def train(config):
                 pbar.set_description('epoch=%d, batch=%d, avg_loss=%.5f, batch_loss=%.5f, lr=%.8f' % (epoch, i, sum_loss / float(batch_size * (i + 1)), batch_loss, current_learning_rate))
                 pbar.update(1)
 
-        valid_acc = eval(model, valid_batch_generator, batch_size, x_valid.shape[0])
+        valid_acc = eval(model, valid_batch_generator, batch_size, x_valid.shape[0], etl=etl)
         print("epoch = %d, valid accuracy = %.4f" % (epoch, valid_acc))
         # save & reload checkpoint by best valid performance
         model_checkpoint_path = config['training']['scheduling']['model_checkpoint_path']
