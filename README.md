@@ -1,4 +1,4 @@
-# asciiko
+# asciiko (アス子)
 --------------------------------------------------------------------------------
 A deep ascii art generator. Job done during MSR Montreal hackathon 2018. This is an on-going project, it's not finished.
 
