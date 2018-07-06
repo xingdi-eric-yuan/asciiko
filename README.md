@@ -1,6 +1,6 @@
 # asciiko (アス子)
 --------------------------------------------------------------------------------
-A deep ascii art generator. Job done during MSR Montreal hackathon 2018. This is an on-going project, it's not finished.
+A deep ascii art generator. Work done during MSR Montreal hackathon 2018.
 
 ## Requirements
 * Python 2/3
@@ -24,20 +24,26 @@ Image processing is an important step before generating ascii arts, and the perf
 
 ## Demo
 * <p align=center><img width="70%" src="demo.jpg" /></p>
+* [example outputs][sample outputs] corresponding to [DeepAA][deepaa] sample images
 * [nichijou op, pic in pic][pic_in_pic]
 * [nichijou op, up and down][up_down]
 
 ## Authors
-[eric yuan][eryua], [@oya0306][tatsuro], [@penzant][saku]
+[eric yuan][eryua], [@oya0306][oya0306], [@penzant][penzant]
 
 ## LICENSE
 [GLWTPL][goodluck]
 
+## References
+[DeepAA][deepaa]
+
 [pytorch_install]: http://pytorch.org/
 [etlcdb]: http://etlcdb.db.aist.go.jp/
+[sample outputs]: https://github.com/xingdi-eric-yuan/asciiko/tree/master/example_outputs/
 [up_down]: https://youtu.be/_pJyuo-ivR4/
 [pic_in_pic]: https://youtu.be/i2fxoowtu1A/
-[eryua]: https://github.com/xingdi-eric-yuan
-[tatsuro]: https://github.com/oya0306
-[saku]: https://github.com/penzant
-[goodluck]: https://github.com/xingdi-eric-yuan/asciiko/blob/master/LICENSE
+[eryua]: https://github.com/xingdi-eric-yuan/
+[oya0306]: https://github.com/oya0306/
+[penzant]: https://github.com/penzant/
+[deepaa]: https://github.com/OsciiArt/DeepAA/
+[goodluck]: https://github.com/xingdi-eric-yuan/asciiko/blob/master/LICENSE/
