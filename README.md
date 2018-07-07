@@ -17,7 +17,7 @@ It will take some time if you run the first time, asciiko will preprocess and pa
 * To generate ascii strings from an image, modify and run `python img2charid.py`, it will generate a `.json` file;
 * To generate ascii strings from a video, run `python utils/get_video_frames.py`, to get all frames of a video into a folder, then modify and run `python img2charid.py`, it will generate a `.json` file.
 * To render the ascii arts, run `python char_classifier/renderer.py`, with your `.json` file specified inside.
-* a pretrained model is provided in `saved_models/`.
+* a pretrained model (on ETL6) is provided in `saved_models/`.
 
 ## Image Processing
 Image processing is an important step before generating ascii arts, and the performance of the latter steps are highly relying on how good the images are processed, i.e., how good the edges are extracted. To our knowledge there's no 'panacea' for all input images/videos, so depending on which specific image or video you are using, sometimes you need to massage your edge detector carefully. Thanks to OpenCV, one can do some standard image processing tricks in one line of python code. We provide code to help tweaking your edge detector in `utils/`.
