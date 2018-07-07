@@ -22,15 +22,24 @@ def data_split(valid_size, test_size, etl='1'):
 
     # images
     x = np.stack(data, axis=0)  # 130k x 64 x 64 (20 x 20)
+    # load id2label
+    id2label = []
+    with open("etl" + etl + "_id2label.txt", "r") as ins:
+        for line in ins:
+            line = line.strip()
+            id2label.append(line)
+
+    label2id = {}
+    for i, _l in enumerate(id2label):
+        label2id[_l] = i
+
     # labels
     label2id = dict()
     id2label = []
     y = []
     for i in range(len(label_char)):
         _char = str(label_char[i])
-        if _char not in label2id:
-            label2id[_char] = len(id2label)
-            id2label.append(_char)
+        assert _char in label2id:
         y.append(label2id[_char])
     y = np.array(y)
 
@@ -41,9 +50,6 @@ def data_split(valid_size, test_size, etl='1'):
 
     if not os.path.exists("parsed_etl_data"):
         os.mkdir("parsed_etl_data")
-
-    with open("parsed_etl_data/etl" + etl + "_id2label.txt", "w") as text_file:
-        text_file.write("\n".join(id2label))
 
     np.save("parsed_etl_data/etl" + etl + "_images_train.npy", train_x)
     np.save("parsed_etl_data/etl" + etl + "_labels_train.npy", train_y)

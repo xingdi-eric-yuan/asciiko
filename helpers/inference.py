@@ -8,7 +8,7 @@ from helpers.model import FancyNeuralNetworks
 
 def load_id2label(etl="1"):
     id2label = []
-    with open("parsed_etl_data/etl" + etl + "_id2label.txt", "r") as ins:
+    with open("etl" + etl + "_id2label.txt", "r") as ins:
         for line in ins:
             line = line.strip()
             if line == 'b"\' "':
